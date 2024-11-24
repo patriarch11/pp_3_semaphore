@@ -6,6 +6,7 @@ import (
 	"math"
 	"math/big"
 	"sync"
+	"time"
 )
 
 const TOTAL_PRODUCT_COUNT = 10
@@ -38,15 +39,15 @@ type Producer struct {
 }
 
 func (p *Producer) Produce(wg *sync.WaitGroup) {
-	fmt.Printf("%sВиробник #%d виробить%s %d продуктів\n",
-		Red, p.id, Reset, p.toProduceCount,
+	fmt.Printf("%s %sВиробник #%d виробить%s %d продуктів\n",
+		time.Now().Format("15:04:01.00000"), Red, p.id, Reset, p.toProduceCount,
 	)
 	defer wg.Done()
 	for range p.toProduceCount {
 		id := genId()
 		p.strorage.Acquire(Product{id: id})
-		fmt.Printf("%sВирбник #%d відправив%s на склад продукт #%s\n",
-			Cyan, p.id, Reset, id,
+		fmt.Printf("%s %sВирбник #%d відправив%s на склад продукт #%s\n",
+			time.Now().Format("15:04:01.00000"), Cyan, p.id, Reset, id,
 		)
 	}
 }
@@ -58,14 +59,14 @@ type Consumer struct {
 }
 
 func (c *Consumer) Use(wg *sync.WaitGroup) {
-	fmt.Printf("%sСпоживач #%d використає%s %d продуктів\n",
-		Green, c.id, Reset, c.toUseCount,
+	fmt.Printf("%s %sСпоживач #%d використає%s %d продуктів\n",
+		time.Now().Format("15:04:01.00000"), Green, c.id, Reset, c.toUseCount,
 	)
 	defer wg.Done()
 	for range c.toUseCount {
 		product := c.storage.Release()
-		fmt.Printf("%sСпоживач #%d використав%s продукт #%s\n",
-			Blue, c.id, Reset, product.id,
+		fmt.Printf("%s %sСпоживач #%d використав%s продукт #%s\n",
+			time.Now().Format("15:04:01.00000"), Blue, c.id, Reset, product.id,
 		)
 	}
 }
